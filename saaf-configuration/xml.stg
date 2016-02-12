@@ -1,0 +1,59 @@
+group saaf-report;
+
+report (analysis) ::= <<
+<?xml version="1.0"?>
+<analysis>
+	<started>$analysis.StartTime;format="xml"$</started>
+	<ended>$analysis.StopTime;format="xml"$</ended>
+	$status(analysis)$
+	$application(analysis.app)$
+	$backtrack_results(analysis.BTResults)$
+</analysis>
+>>
+
+status(analysis) ::= <<
+	<status>
+		<message>$analysis.status;format="xml"$</message>
+		$noncrit_exceptions(analysis.NonCriticalExceptions)$
+		$crit_exceptions(analysis.CriticalExceptions)$
+	</status>
+>>
+
+noncrit_exceptions(excptns) ::= <<
+	<non-critical-exceptions>
+		$excptns:exception()$
+	</non-critical-exceptions>
+>>
+
+crit_exceptions(excptns) ::= <<
+	<critical-exceptions>
+		$excptns:exception()$
+	</critical-exceptions>
+>>
+
+exception(e) ::=<<
+	<exception>$e.message;format="xml"$</exception>
+>>
+
+backtrack_results(btresults) ::=<<
+<backtracking-results>
+	$btresults:backtrack_result()$
+</backtracking-results>
+>>
+
+
+backtrack_result(btresult) ::=<<
+	<backtrack-result>
+		<pattern >$btresult.pattern.description;format="xml"$</pattern>
+		<file>$btresult.file.relativeFile;format="xml"$</file>
+		<method>$btresult.codeline.method.ReadableJavaName;format="xml"$</method>
+		<value>$btresult.constant.value;format="xml"$</value>
+		<variable-type>$btresult.Constant.VariableType;format="xml"$</variable-type>
+		<variable-description>$btresult.Constant.TypeDescription;format="xml"$</variable-description>
+		<fuzzy-level>$btresult.Constant.FuzzyLevel;format="xml"$</fuzzy-level>	
+		<path>$btresult.Constant.Path;format="xml"$</path>
+	</backtrack-result>
+	
+>>
+
+

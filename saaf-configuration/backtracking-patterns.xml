@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<backtracking-patterns xmlns="http://syssec.rub.de/SAAF"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://syssec.rub.de/SAAF schema/backtracking-patterns.xsd">
+	<!--                    H E R E  I T  S T A R T S  V U L N  F I N D E R  R U L E S                      -->
+
+	<!-- WebView addJavascriptInterface-->
+	<backtracking-pattern active="true"
+			class="android/webkit/WebView" description="Webview addJavascriptInterface" method="addJavascriptInterface"
+			parameters="Ljava/lang/Object;Ljava/lang/String;" interesting="1" />
+
+    <!-- 	W O R L D  R E A D A B L E / W R I T E A B L E  F I L E S -->
+
+	<!-- Context openFileOutput-->
+    <backtracking-pattern active="true"
+			class="android/content/Context" description="Mode WORLD_READABLE/WRITEABLE File" method="openFileOutput"
+			parameters="Ljava/lang/String;I" interesting="1" />
+
+	<!-- SharedPreferences getSharedPreferences-->
+    <backtracking-pattern active="true"
+			class="android/content/Context" description="Mode WORLD_READABLE/WRITEABLE SharedPreference" method="getSharedPreferences"
+			parameters="Ljava/lang/String;I" interesting="1" />
+
+	<!-- Database openOrCreateDatabase-->
+    <backtracking-pattern active="true"
+			class="*" description="Mode WORLD_READABLE/WRITEABLE Database" method="openOrCreateDatabase"
+			parameters="Ljava/lang/String;ILandroid/database/sqlite/SQLiteDatabase$CursorFactory;" interesting="1" />
+
+	<!-- Database openOrCreateDatabase-->
+    <backtracking-pattern active="true"
+			class="*" description="Mode WORLD_READABLE/WRITEABLE Database" method="openOrCreateDatabase"
+			parameters="Ljava/lang/String;ILandroid/database/sqlite/SQLiteDatabase$CursorFactory;android.database.DatabaseErrorHandler;" interesting="1" />
+
+    <!-- 	R E G I S T E R  R E C E I V E R
+
+	 Context registerReceiver
+    <backtracking-pattern active="true"
+			class="*" description="Unprotected dynamically registered Receiver" method="registerReceiver"
+			parameters="Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;" interesting="1" />
+
+	Context registerReceiver
+    <backtracking-pattern active="true"
+			class="*" description="Unprotected dynamically registered Receiver" method="registerReceiver"
+			parameters="Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;Ljava/lang/String;Landroid.os.Handler;" interesting="2" />
+		-->
+    <!-- 	S T I C K Y  B R O A D C A S T -->
+
+	<!-- Context sendStickyBroadcast-->
+    <backtracking-pattern active="true"
+			class="android/content/Context" description="Sticky Broadcast" method="sendStickyBroadcast"
+			parameters="Landroid/content/Intent;" interesting="0" />
+
+	<!-- Context sendStickyBroadcastAsUser-->
+    <backtracking-pattern active="true"
+			class="android/content/Context" description="Sticky Broadcast" method="sendStickyBroadcastAsUser"
+			parameters="Landroid/content/Intent;Landroid/os/UserHandle;" interesting="0" />
+
+	<!-- Context sendStickyOrderedBroadcast-->
+    <backtracking-pattern active="true"
+			class="android/content/Context" description="Sticky Broadcast" method="sendStickyOrderedBroadcast"
+			parameters="Landroid/content/Intent;Landroid/content/BroadcastReceiver;Landroid/os/Handler;ILjava/lang/String;Landroid/os/Bundle;" interesting="0" />
+
+	<!-- Context sendStickyOrderedBroadcastAsUser-->
+    <backtracking-pattern active="true"
+			class="android/content/Context" description="Sticky Broadcast" method="sendStickyOrderedBroadcastAsUser"
+			parameters="Landroid/content/Intent;Landroid/os/UserHandle;Landroid/content/BroadcastReceiver;Landroid/os/Handler;ILjava/lang/String;Landroid/os/Bundle;" interesting="0" />
+
+    <!-- 	A U T O C O M P L E T E T E X T V I E W -->
+
+	<!-- AutoCompleteTextView setInputType-->
+    <backtracking-pattern active="true"
+			class="android/widget/AutoCompleteTextView" description="Autocompleted password input" method="setInputType"
+			parameters="I" interesting="0" />			
+
+    <!-- 	W E B S E T T I N G S -->
+
+	<!-- WebSettings setSavePassword-->
+    <backtracking-pattern active="true"
+			class="android/webkit/WebSettings" description="Webview saved password" method="setSavePassword"
+			parameters="Z" interesting="0" />
+
+	<!-- C L A S S L O A D E R -->
+
+	<backtracking-pattern active="true" class="dalvik/system/PathClassLoader" 
+		 	description="Insecure PathClassLoader" method="&lt;init&gt;"
+			parameters="Ljava/lang/String;Ljava/lang/ClassLoader;" interesting="0" />
+
+	<backtracking-pattern active="true" class="dalvik/system/PathClassLoader" 
+		 	description="Insecure PathClassLoader" method="&lt;init&gt;"
+			parameters="Ljava/lang/String;Ljava/lang/String;Ljava/lang/ClassLoader;" interesting="0" />
+
+	<backtracking-pattern active="true" class="dalvik/system/DexClassLoader" 
+		 	description="Insecure PathClassLoader" method="&lt;init&gt;"
+			parameters="Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/ClassLoader;" interesting="0" />
+
+    <!-- 	S M T P -->
+	<!-- Hardcoded SMTP PASSWORD -->
+	<backtracking-pattern active="true" class="javax/mail/PasswordAuthentication" 
+		 	description="Hardcoded SMTP Password" method="&lt;init&gt;"
+			parameters="Ljava/lang/String;Ljava/lang/String;" interesting="1" />
+
+	<!-- 	C R Y P T O  E R R O R S  R U L E S -->
+
+	<!-- CryptoErrors: Hardcoded key SecretKeySpec -->
+	<backtracking-pattern active="true" class="javax/crypto/spec/SecretKeySpec"
+		description="Hardcoded crypto key analysis" method="&lt;init&gt;" parameters="[BLjava/lang/String;"
+		interesting="0" />
+
+	<!-- CryptoErrors: Hardcoded key SecretKeySpec (another constructor) -->
+	<backtracking-pattern active="true" class="javax/crypto/spec/SecretKeySpec"
+		description="Hardcoded crypto key analysis" method="&lt;init&gt;" parameters="[BIILjava/lang/String;"
+		interesting="0" />
+
+	<!-- CryptoErrors: Hardcoded triple DES key -->
+	<backtracking-pattern active="true" class="javax/crypto/spec/DESedeKeySpec"
+		description="Hardcoded crypto key analysis" method="&lt;init&gt;" parameters="[B"
+		interesting="0" />
+
+	<!-- CryptoErrors: Hardcoded triple DES key (another constructor) -->
+	<backtracking-pattern active="true" class="javax/crypto/spec/DESedeKeySpec"
+		description="Hardcoded crypto key analysis" method="&lt;init&gt;" parameters="[BI"
+		interesting="0" />
+
+	<!-- CryptoErrors: Hardcoded triple DES key -->
+	<backtracking-pattern active="true" class="javax/crypto/spec/DESKeySpec"
+		description="Hardcoded crypto key analysis" method="&lt;init&gt;" parameters="[B"
+		interesting="0" />
+
+	<!-- CryptoErrors: Hardcoded triple DES key (another constructor) -->
+	<backtracking-pattern active="true" class="javax/crypto/spec/DESKeySpec"
+		description="Hardcoded crypto key analysis" method="&lt;init&gt;" parameters="[BI"
+		interesting="0" />
+
+	<!-- CryptoErrors: Use of ECB (Cipher getInstance) -->
+	<backtracking-pattern active="true" class="javax/crypto/Cipher"
+		description="Encryption algorithm analysis" method="getInstance" parameters="Ljava/lang/String;"
+		interesting="0" />
+
+	<!-- CryptoErrors: Use of ECB (Cipher getInstance) -->
+	<backtracking-pattern active="true" class="javax/crypto/Cipher"
+		description="Encryption algorithm analysis" method="getInstance" parameters="Ljava/lang/String;Ljava/lang/String;"
+		interesting="0" />
+
+	<!-- CryptoErrors: Use of ECB (Cipher getInstance) -->
+	<backtracking-pattern active="true" class="javax/crypto/Cipher"
+		description="Encryption algorithm analysis" method="getInstance" parameters="Ljava/lang/String;Ljava/security/Provider;"
+		interesting="0" />
+
+    <!-- CryptoErrors: Use of MD5 (MessageDigest getInstance) -->
+	<backtracking-pattern active="true" class="java/security/MessageDigest"
+		description="Digest algorithm analysis" method="getInstance" parameters="Ljava/lang/String;"
+		interesting="0" />
+
+	<!-- CryptoErrors: Use of MD5 (MessageDigest getInstance) -->
+	<backtracking-pattern active="true" class="java/security/MessageDigest"
+		description="Digest algorithm analysis" method="getInstance" parameters="Ljava/lang/String;Ljava/lang/String;"
+		interesting="0" />
+
+	<!-- CryptoErrors: Use of MD5 (MessageDigest getInstance) -->
+	<backtracking-pattern active="true" class="java/security/MessageDigest"
+		description="Digest algorithm analysis" method="getInstance" parameters="Ljava/lang/String;Ljava/security/Provider;"
+		interesting="0" />
+
+
+
+	<!-- CryptoErrors: Use of hardcoded IV -->
+	<backtracking-pattern active="true" class="javax/crypto/spec/IvParameterSpec"
+		description="Hardcoded IV analysis" method="&lt;init&gt;" parameters="[B"
+		interesting="0" />
+
+	<!-- CryptoErrors: Use of hardcoded IV -->
+	<backtracking-pattern active="true" class="javax/crypto/spec/IvParameterSpec"
+		description="Hardcoded IV analysis" method="&lt;init&gt;" parameters="[BII"
+		interesting="0" />
+
+	<!-- CryptoErrors: hardcoded password of PBE  -->
+	<backtracking-pattern active="true" class="javax/crypto/spec/PBEKeySpec"
+		description="Hardcoded password of PBE" method="&lt;init&gt;" parameters="[C"
+		interesting="0" />	
+
+	<!-- CryptoErrors: hardcoded password of PBE  (another constructor) -->
+	<backtracking-pattern active="true" class="javax/crypto/spec/PBEKeySpec"
+		description="Hardcoded password of PBE" method="&lt;init&gt;" parameters="[C[BI"
+		interesting="0" />	
+
+	<!-- CryptoErrors: hardcoded password of PBE  (yet another constructor) -->
+	<backtracking-pattern active="true" class="javax/crypto/spec/PBEKeySpec"
+		description="Hardcoded password of PBE" method="&lt;init&gt;" parameters="[C[BII"
+		interesting="0" />	
+	
+	<!-- CryptoErrors: Use of hardcoded salt for PasswordBasedEncryption -->
+	<backtracking-pattern active="true" class="javax/crypto/spec/PBEParameterSpec"
+		description="Hardcoded salt of PBE" method="&lt;init&gt;" parameters="[BI"
+		interesting="0" />
+
+	<!-- CryptoErrors: hardcoded salt of PBE  -->
+	<backtracking-pattern active="true" class="javax/crypto/spec/PBEKeySpec"
+		description="Hardcoded salt of PBE" method="&lt;init&gt;" parameters="[C[BI"
+		interesting="1" />	
+
+	<!-- CryptoErrors: hardcoded salt of PBE  (yet another constructor) -->
+	<backtracking-pattern active="true" class="javax/crypto/spec/PBEKeySpec"
+		description="Hardcoded salt of PBE" method="&lt;init&gt;" parameters="[C[BII"
+		interesting="1" />	
+
+	<!-- CryptoErrors: Low number of iterations of PBE -->
+	<backtracking-pattern active="true" class="javax/crypto/spec/PBEParameterSpec"
+		description="Hardcoded salt of PBE" method="&lt;init&gt;" parameters="[BI"
+		interesting="1" />
+
+	<!-- CryptoErrors: Low number of iterations of PBE -->
+	<backtracking-pattern active="true" class="javax/crypto/spec/PBEKeySpec"
+		description="Low number of iterations of PBE" method="&lt;init&gt;" parameters="[C[BI"
+		interesting="2" />	
+
+	<!-- CryptoErrors: Low number of iterations of PBE (yet another constructor)-->
+	<backtracking-pattern active="true" class="javax/crypto/spec/PBEKeySpec"
+		description="Low number of iterations of PBE" method="&lt;init&gt;" parameters="[C[BII"
+		interesting="2" />	
+
+	<!-- CryptoErrors: Hardcoded Seed of Secure Random  -->
+	<backtracking-pattern active="true" class="java/security/SecureRandom"
+		description="Hardcoded Seed of Secure Random" method="&lt;init&gt;" parameters="[B"
+		interesting="0" />
+
+	<!-- CryptoErrors: Hardcoded Seed of Secure Random  -->
+	<backtracking-pattern active="true" class="java/security/SecureRandom"
+		description="Hardcoded Seed of Secure Random" method="setSeed" parameters="J"
+		interesting="0" />
+
+	<!-- CryptoErrors: Hardcoded Seed of Secure Random  -->
+	<backtracking-pattern active="true" class="java/security/SecureRandom"
+		description="Hardcoded Seed of Secure Random" method="setSeed" parameters="[B"
+		interesting="0" />
+
+	<!-- I N S E C U R E  E X E C -->
+
+	<backtracking-pattern active="true" class="java/lang/Runtime"
+		method="exec" parameters="Ljava/lang/String;"
+		description="Execute external program"
+		interesting="0" />	
+	
+	<backtracking-pattern active="true" class="java/lang/Runtime"
+		method="exec" parameters="[Ljava/lang/String;"
+		description="Execute external program"
+		interesting="0" />
+	
+	<backtracking-pattern active="true" class="java/lang/Runtime"
+		method="exec" parameters="Ljava/lang/String;[Ljava/lang/String;"
+		description="Execute external program"
+		interesting="0" />
+	
+	<backtracking-pattern active="true" class="java/lang/Runtime"
+		method="exec" parameters="[Ljava/lang/String;[Ljava/lang/String;"
+		description="Execute external program"
+		interesting="0" />
+	
+	<backtracking-pattern active="true" class="java/lang/Runtime"
+		method="exec" parameters="[Ljava/lang/String;[Ljava/lang/String;Ljava/io/File;"
+		description="Execute external program"
+		interesting="0" />
+	
+	<backtracking-pattern active="true" class="java/lang/Runtime"
+		method="exec" parameters="Ljava/lang/String;[Ljava/lang/String;Ljava/io/File;"
+		description="Execute external program"
+		interesting="0" />	
+
+	<!-- H A R D C O D E D  R A N D O M  S E E D S
+	<backtracking-pattern active="true" class="java/util/Random"
+		description="Hardcoded Seed of Random" method="&lt;init&gt;" parameters="J"
+		interesting="0" />
+
+	<backtracking-pattern active="true" class="java/util/Random"
+		description="Hardcoded Seed of Random" method="setSeed" parameters="J"
+		interesting="0" />   -->
+
+	<!-- E N D	C R Y P T O  E R R O R S  R U L E S -->
+
+	<!-- H A R D  C O D E D  T O K E N  R U L E S -->
+
+	<!-- Twitter: Hardcoded App Secret  -->
+	<!-- http://arstechnica.com/security/2010/09/twitter-a-case-study-on-how-to-do-oauth-wrong/ -->
+	<backtracking-pattern active="true" class="twitter4j/Twitter"
+		description="Twitter's consumer secret analysis" method="setOAuthConsumer" parameters="Ljava/lang/String;Ljava/lang/String;"
+		interesting="1" />
+
+	<backtracking-pattern active="true" class="twitter4j/conf/ConfigurationBuilder"
+		description="Twitter's consumer secret analysis" method="setOAuthConsumerSecret" parameters="Ljava/lang/String;"
+		interesting="0" />
+
+	<!-- H A R D C O D E D  A P A C H E  A U T H  R U L E S -->
+
+	<backtracking-pattern active="true" class="org/apache/http/auth/UsernamePasswordCredentials"
+		description="Apache credentials hardcoded username" method="&lt;init&gt;" parameters="Ljava/lang/String;Ljava/lang/String;"
+		interesting="0" />
+
+	<backtracking-pattern active="true" class="org/apache/http/auth/UsernamePasswordCredentials"
+		description="Apache credentials hardcoded password" method="&lt;init&gt;" parameters="Ljava/lang/String;Ljava/lang/String;"
+		interesting="1" />
+
+	<backtracking-pattern active="true" class="org/apache/http/auth/UsernamePasswordCredentials"
+		description="Apache credentials username and password" method="&lt;init&gt;" parameters="Ljava/lang/String;"
+		interesting="0" />
+
+	<!-- Facebook: Hardcoded App Secret  -->
+	<!--<backtracking-pattern active="false" class="twitter4j/Twitter"
+		description="Facebook's APP_ID analysis" method="&lt;init&gt;" parameters="Ljava/lang/String;"
+		interesting="0" /> -->
+	
+	<!-- H A R D  C O D E D  T O K E N  R U L E S -->
+
+    <!-- B A C K E N D  A S  A  S E R V I C E  R U L E S -->
+
+    <!-- P A R S E -->
+
+	<backtracking-pattern active="true" class="com/parse/Parse"
+		description="Parse BaaS " method="initialize;" parameters="Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;"
+		interesting="2" />
+
+    <!-- A W S  -->
+
+	<backtracking-pattern active="true" class="com/amazon/auth/BasicAWSCredentials"
+		description="AWS BaaS " method="&lt;init&gt;" parameters="Ljava/lang/String;Ljava/lang/String;"
+		interesting="1" />
+
+    <!-- C L O U D M I N E  -->
+
+	<backtracking-pattern active="true" class="com/cloudmine/api/CMApiCredentials"
+		description="CloudMine BaaS " method="initialize;" parameters="Ljava/lang/String;Ljava/lang/String;"
+		interesting="1" />
+
+    <backtracking-pattern active="true" class="com/cloudmine/api/CMApiCredentials"
+		description="CloudMine BaaS " method="initialize;" parameters="Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;"
+		interesting="1" />
+
+    <backtracking-pattern active="true" class="com/cloudmine/api/CMApiCredentials"
+		description="CloudMine BaaS " method="initialize;" parameters="Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;"
+		interesting="1" />
+
+    <backtracking-pattern active="true" class="com/cloudmine/api/CMApiCredentials"
+		description="CloudMine BaaS " method="initialize;" parameters="Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;"
+		interesting="1" />
+
+    <!-- A Z U R E  -->
+
+    <backtracking-pattern active="true" class="com/microsoft/windowsazure/mobileservices/MobileServiceClient"
+		description="Azure BaaS " method="&lt;init&gt;"  parameters="Ljava/lang/String;Ljava/lang/String;Landroid/content/Context;"
+		interesting="1" />
+
+
+</backtracking-patterns>
