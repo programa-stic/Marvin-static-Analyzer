@@ -47,6 +47,11 @@ class SSLAnalyzer(VulnerabilityAnalyzer):
             return _i == _x
         return False
 
+    def returns_proceed(self, _method):
+        _instructions = self.get_method_instructions(_method)
+        return filter(lambda instruction : instruction.get_name() == 'invoke-virtual' and 'proceed' in instruction.get_translated_kind(),_instructions)
+
+
     def returns_void(self, _method):
         _instructions = self.get_method_instructions(_method)
         if len(_instructions) == 1:
@@ -155,11 +160,10 @@ class SSLAnalyzer(VulnerabilityAnalyzer):
 
         if has_signature(_method, [_on_received_ssl_error]):
             _class = _vm.get_class(_method.get_class_name())
-            if class_extends_class(_class, _webviewclient_classes) or True:
+            if class_extends_class(_class, _webviewclient_classes) and self.returns_proceed(_method):
                 _java_b64, _xref = self.get_javab64_xref(_class, _vmx)
-                _empty = self.returns_true(_method) or self.returns_void(_method)
                 _custom_on_received_ssl_error.append(
-                    {'class': _class, 'xref': _xref, 'java_b64': _java_b64, 'empty': _empty})
+                    {'class': _class, 'xref': _xref, 'java_b64': _java_b64, 'empty': True})
 
         return _custom_on_received_ssl_error
 
@@ -206,8 +210,7 @@ class SSLAnalyzer(VulnerabilityAnalyzer):
 
         for _ssl in _result['onreceivedsslerror']:
             notification = "App ignores Webview SSL errors."
-            if _ssl['empty']:
-                notification += "It implements naive certificate check. This Webview breaks certificate validation!"
+            notification += " It calls proceed method. This Webview breaks certificate validation!"
             self.add_vulnerability("SSL_WEBVIEW_ERROR", notification, 1, True,reference_class=_ssl['class'].get_name())
 
         return self.get_report()
