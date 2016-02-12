@@ -66,6 +66,9 @@ Luego puede correr el analizador con el comando:
 
 * Python 2.7.x (No usar Python 3.X) 
 
-### ¿A quien puedo pedirle ayuda? ###
-* Joaquín Rinaudo jrinaudo@fundacionsadosky.org.ar
-* Juan Heguiabehere jheguia@fundacionsadosky.org.ar
+### Créditos ###
+* Joaquín Rinaudo ([@xeroxnir](www.twitter.com/xeroxnir))
+* Juan Heguiabehere ([@jheguia](www.twitter.com/jheguia))
+
+### Contacto ###
+* Mandar un correo a stic en el dominio fundacionsadosky.org.ar
