@@ -8,11 +8,11 @@ Marvin static analyzer es un analizador de vulnerabilidades de aplicaciones Andr
 
 Antes de correrlo, instalar las dependencias necesarias utilizando el instalador proveido:
 
-```./install.sh```
+```./install.sh ```
 
 Luego puede correr el analizador con el comando:
 
-```python MarvinStaticAnalyzer.py [DIRECTORIO CONTENIENDO APK]```
+```python MarvinStaticAnalyzer.py [DIRECTORIO CONTENIENDO APK] ```
 
 ##Vulnerabilidades analizadas estáticamente por Marvin##
 
