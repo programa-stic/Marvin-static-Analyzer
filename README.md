@@ -7,10 +7,10 @@ Marvin static analyzer is an Android application vulnerability scanner. No user 
 How to run:
 
 Before running, first install its dependencies using the provided installer:
-  ```./install.sh```
-
+  ```./install.sh ```
+  
 Then you can run Marvin static analyzer with:
-  ```python MarvinStaticAnalyzer.py [FOLDER CONTAINING APKS]```
+  ```python MarvinStaticAnalyzer.py [FOLDER CONTAINING APKS] ```
 
 ##Vulnerabilities checked by analyzer##
 
