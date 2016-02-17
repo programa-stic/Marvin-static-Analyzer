@@ -67,8 +67,8 @@ Luego puede correr el analizador con el comando:
 * Python 2.7.x (No usar Python 3.X) 
 
 ### Créditos ###
-* Joaquín Rinaudo ([@xeroxnir](www.twitter.com/xeroxnir))
-* Juan Heguiabehere ([@jheguia](www.twitter.com/jheguia))
+* Joaquín Rinaudo ([@xeroxnir](https://www.twitter.com/xeroxnir))
+* Juan Heguiabehere ([@jheguia](https://www.twitter.com/jheguia))
 
 ### Contacto ###
 * Mandar un correo a stic en el dominio fundacionsadosky.org.ar
