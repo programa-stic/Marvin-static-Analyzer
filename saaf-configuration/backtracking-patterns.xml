@@ -314,37 +314,37 @@
     <!-- P A R S E -->
 
 	<backtracking-pattern active="true" class="com/parse/Parse"
-		description="Parse BaaS " method="initialize;" parameters="Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;"
+		description="Parse BaaS" method="initialize" parameters="Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;"
 		interesting="2" />
 
     <!-- A W S  -->
 
 	<backtracking-pattern active="true" class="com/amazon/auth/BasicAWSCredentials"
-		description="AWS BaaS " method="&lt;init&gt;" parameters="Ljava/lang/String;Ljava/lang/String;"
+		description="AWS BaaS" method="&lt;init&gt;" parameters="Ljava/lang/String;Ljava/lang/String;"
 		interesting="1" />
 
     <!-- C L O U D M I N E  -->
 
 	<backtracking-pattern active="true" class="com/cloudmine/api/CMApiCredentials"
-		description="CloudMine BaaS " method="initialize;" parameters="Ljava/lang/String;Ljava/lang/String;"
+		description="CloudMine BaaS" method="initialize" parameters="Ljava/lang/String;Ljava/lang/String;"
 		interesting="1" />
 
     <backtracking-pattern active="true" class="com/cloudmine/api/CMApiCredentials"
-		description="CloudMine BaaS " method="initialize;" parameters="Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;"
+		description="CloudMine BaaS" method="initialize" parameters="Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;"
 		interesting="1" />
 
     <backtracking-pattern active="true" class="com/cloudmine/api/CMApiCredentials"
-		description="CloudMine BaaS " method="initialize;" parameters="Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;"
+		description="CloudMine BaaS" method="initialize" parameters="Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;"
 		interesting="1" />
 
     <backtracking-pattern active="true" class="com/cloudmine/api/CMApiCredentials"
-		description="CloudMine BaaS " method="initialize;" parameters="Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;"
+		description="CloudMine BaaS" method="initialize" parameters="Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;"
 		interesting="1" />
 
     <!-- A Z U R E  -->
 
     <backtracking-pattern active="true" class="com/microsoft/windowsazure/mobileservices/MobileServiceClient"
-		description="Azure BaaS " method="&lt;init&gt;"  parameters="Ljava/lang/String;Ljava/lang/String;Landroid/content/Context;"
+		description="Azure BaaS" method="&lt;init&gt;"  parameters="Ljava/lang/String;Ljava/lang/String;Landroid/content/Context;"
 		interesting="1" />
 
 
