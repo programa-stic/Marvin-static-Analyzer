@@ -283,7 +283,7 @@ class InsecureExec(SAAFError):
         read_from_file = variable in ('java/io/RandomAccessFile->readLine()','java/io/BufferedReader->readLine()','java/io/InputStreamReader->read([C)')
         read_from_input = 'android/content/Intent->get' in variable
         read_from_sharedpreference = 'android/content/SharedPreferences->get' in variable
-        read_from_network = 'org/apache/http/HttpResponse' in variable or 	'java/net/URLConnection' in variable
+        read_from_network = 'org/apache/http/HttpResponse' in variable or   'java/net/URLConnection' in variable
         return method_call and (read_from_file or read_from_input or read_from_sharedpreference or read_from_network)
 
     def get_vuln_code(cls):
@@ -357,8 +357,9 @@ class CryptoError(SAAFError):
     def get_message(self):
         return
 
+    @abc.abstractmethod
     def get_report(self):
-        return self.get_message()
+        return ""
 
 
 class TwitterConsumerKey(CryptoError):
@@ -419,7 +420,7 @@ class ECBModeEncryption(CryptoError):
         return variable.find('AES/ECB') != -1 or variable.find(
             'DES/ECB') != -1 or variable == 'AES' or variable == 'DES'
 
-    def get_message(self):
+    def get_report(self):
         return "Uses ECB encryption mode"
 
 
@@ -440,7 +441,7 @@ class InsecureCipher(CryptoError):
         in_keywords = any(variable.lower().find(keyword) != -1 for keyword in insecure_cipher_keyword_list)
         return self.is_constant() and in_keywords
 
-    def get_message(self):
+    def get_report(self):
         return "Uses insecure cipher "+self.element.get('value').replace("\"", "")
 
 
@@ -461,7 +462,7 @@ class InsecureDigest(CryptoError):
         in_keywords = any(variable.lower().find(keyword) != -1 for keyword in insecure_cipher_keyword_list)
         return self.is_constant() and in_keywords
 
-    def get_message(self):
+    def get_report(self):
         return "Uses insecure digest "+self.element.get('value').replace("\"", "")
 
 
@@ -500,7 +501,7 @@ class HardcodedValue(CryptoError):
         return False
 
     @abc.abstractmethod
-    def get_message(self):
+    def get_report(self):
         return
 
 class HardcodedSeedRandom(HardcodedValue):
@@ -515,7 +516,7 @@ class HardcodedSeedRandom(HardcodedValue):
         #an hardcoded array or a long with fuzzy level zero
         return self.is_constant() and (self.element.get('variable-type') == 'ARRAY' or int(self.element.get('fuzzy-level')) == 0)
 
-    def get_message(self):
+    def get_report(self):
         return "Uses a harcoded seed for SecureRandom " + self.element.get('value')
 
 
@@ -527,7 +528,7 @@ class HardcodedKey(HardcodedValue):
     def get_error_code(cls):
         return 'Hardcoded crypto key'
 
-    def get_message(self):
+    def get_report(self):
         return "Has a hardcoded key " + self.element.get('value')
 
 
@@ -539,7 +540,7 @@ class HardcodedIV(HardcodedValue):
     def get_error_code(cls):
         return 'Hardcoded IV analysis'
 
-    def get_message(self):
+    def get_report(self):
         return "Has a hardcoded IV " + self.element.get('value')
 
 
@@ -551,7 +552,7 @@ class PBEHardcodedKey(HardcodedValue):
     def get_error_code(cls):
         return 'Hardcoded password of PBE'
 
-    def get_message(self):
+    def get_report(self):
         return "Password based encryption has a hardcoded key " + self.element.get('value')
 
 
@@ -563,7 +564,7 @@ class PBEHardcodedSalt(HardcodedValue):
     def get_error_code(cls):
         return 'Hardcoded salt of PBE'
 
-    def get_message(self):
+    def get_report(self):
         return "Password based encryption has a hardcoded salt " + self.element.get('value')
 
 
@@ -582,8 +583,7 @@ class PBELowIteration(CryptoError):
         except ValueError:
             return False
 
-    @abc.abstractmethod
-    def get_message(self):
+    def get_report(self):
         return "Low number of iterations for PBE encryption %d" % int(self.element.get('value'))
 
 
@@ -610,34 +610,46 @@ class BaaSApiKey(HardcodedValue):
 class ParseBaaSApiKey(BaaSApiKey):
     @classmethod
     def get_error_code(cls):
+        return "Parse BaaS"
+
+    def get_vuln_code(cls):
         return "BAAS_PARSE"
 
     def get_report(self):
-        return "Parse BaaS service " + super(BaaSApiKey, self).get_report()
+        return "Parse BaaS service " + super(ParseBaaSApiKey, self).get_report()
 
 class AWSBaaSApiKey(BaaSApiKey):
     @classmethod
     def get_error_code(cls):
+        return "AWS BaaS"
+
+    def get_vuln_code(cls):
         return "BAAS_AWS"
 
     def get_report(self):
-        return "AWS BaaS service " + super(BaaSApiKey, self).get_report()
+        return "AWS BaaS service " + super(AWSBaaSApiKey, self).get_report()
 
 class CloudMineBaaSApiKey(BaaSApiKey):
     @classmethod
     def get_error_code(cls):
+        return "CloudMine BaaS"
+
+    def get_vuln_code(cls):
         return "BAAS_CLOUDMINE"
 
     def get_report(self):
-        return "CloudMine service " + super(BaaSApiKey, self).get_report()
+        return "CloudMine service " + super(CloudMineBaaSApiKey, self).get_report()
 
 class AzureBaaSApiKey(BaaSApiKey):
     @classmethod
     def get_error_code(cls):
+        return "Azure BaaS"
+
+    def get_vuln_code(cls):
         return "BAAS_AZURE"
 
     def get_report(self):
-        return "Azure service " + super(BaaSApiKey, self).get_report()
+        return "Azure service " + super(AzureBaaSApiKey, self).get_report()
 
 
 class ApacheCredentialHardcodedUsername(HardcodedValue):
@@ -648,7 +660,7 @@ class ApacheCredentialHardcodedUsername(HardcodedValue):
     def get_error_code(cls):
         return 'Apache credentials hardcoded username'
 
-    def get_message(self):
+    def get_report(self):
         return "Has Apache credentials hardcoded username " + self.element.get('value')
 
 
@@ -660,7 +672,7 @@ class ApacheCredentialHardcodedPassword(HardcodedValue):
     def get_error_code(cls):
         return 'Apache credentials hardcoded password'
 
-    def get_message(self):
+    def get_report(self):
         return "Has Apache credentials hardcoded password " + self.element.get('value')
 
 
@@ -672,7 +684,7 @@ class ApacheCredentialHardcodedUsernameAndPassword(HardcodedValue):
     def get_error_code(cls):
         return 'Apache credentials username and password'
 
-    def get_message(self):
+    def get_report(self):
         return "Has Apache credentials hardcoded " + self.element.get('value')
 
 
