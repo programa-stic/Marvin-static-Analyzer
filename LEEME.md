@@ -61,6 +61,7 @@ Luego puede correr el analizador con el comando:
 * VUNGLE
 * PATH_TRAVERSAL_PROVIDER
 * HARDCODED_BAAS_SECRET_KEYS (AWS, CloudMine, Azure, Parse)
+* SURREPTITIOUS_SHARING
 
 ### Requerimientos ###
 

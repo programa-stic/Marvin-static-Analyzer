@@ -36,7 +36,7 @@ class SurreptitiousSharingAnalyzer(VulnerabilityAnalyzer):
         self.cm = cm
 
     def get_send_filter_allowing_file_scheme(self, activity):
-        intent_filters_vulnerables = []
+        suspicious_intent_filters = []
         for int_filt in activity.getElementsByTagName('intent-filter'):
             action_send = any(action.getAttribute('android:name') == 'android.intent.action.SEND' or
                               action.getAttribute('android:name') == 'android.intent.action.SEND_MULTIPLE'
@@ -46,8 +46,8 @@ class SurreptitiousSharingAnalyzer(VulnerabilityAnalyzer):
                     d.getAttribute('android:scheme') == 'file' for d in int_filt.getElementsByTagName('data'))
                 no_scheme = not any(d.hasAttribute('android:scheme') for d in int_filt.getElementsByTagName('data'))
                 if file_allowed or no_scheme:
-                    intent_filters_vulnerables.append(int_filt)
-        return intent_filters_vulnerables
+                    suspicious_intent_filters.append(int_filt)
+        return suspicious_intent_filters
 
     def is_mime_checked_in_filter(self, int_filt):
         return any(d.hasAttribute('android:mimeType') and d.getAttribute('android:mimeType') != "*/*"
@@ -61,45 +61,33 @@ class SurreptitiousSharingAnalyzer(VulnerabilityAnalyzer):
         notify = []
         confidences = []
         mime_checked_confidence = 0.5
-        non_mime_checked_confidence = 0.95
+        no_mime_checked_confidence = 0.90
 
         for activity in self.browseable_activities():
             activity_name = self.apk.format_value(activity.getAttribute('android:name'))
             file_schemes_allowing_filter = self.get_send_filter_allowing_file_scheme(activity)
-            if len(file_schemes_allowing_filter) != 0:
-                for int_filt in file_schemes_allowing_filter:
-                    is_mime_checked = self.is_mime_checked_in_filter(int_filt)
-                    if is_mime_checked:
-                        intent_confidence = mime_checked_confidence
-                        confidences.append(mime_checked_confidence)
-                    else:
-                        intent_confidence = non_mime_checked_confidence
-                        confidences.append(non_mime_checked_confidence)
-                    print int_filt.toxml()
-                    print "Activity name:", activity_name
-                    print "File Scheme allowed: True \nMIME type checked: ", is_mime_checked
-                    print "Intent confidence:", intent_confidence, '\n'
-                    notify.append({ "activity_name": activity_name,
-                                    "is_file_scheme_allowed": True,
-                                    "is_mime_checked": is_mime_checked,
-                                    "intent_confidence": intent_confidence,
-                                    "manifest_entry": activity})
+            for int_filt in file_schemes_allowing_filter:
+                is_mime_checked = self.is_mime_checked_in_filter(int_filt)
+                if is_mime_checked:
+                    intent_confidence = mime_checked_confidence
+                    confidences.append(mime_checked_confidence)
+                else:
+                    intent_confidence = no_mime_checked_confidence
+                    confidences.append(no_mime_checked_confidence)
+                # print int_filt.toxml()
+                # print "Activity name:", activity_name
+                # print "File Scheme allowed: True \nMIME type checked: ", is_mime_checked
+                # print "Intent confidence:", intent_confidence, '\n'
+                notify.append({ "activity_name": activity_name,
+                                "is_mime_checked": is_mime_checked,
+                                "intent_confidence": intent_confidence,
+                                "manifest_entry": activity})
 
-        print "Final confidence:", max(confidences), '\n'
-
-        # ToDo: Complete the report
-        # for activity in notify:
-        #     description = "An application that allows file scheme (using method %s) to be browsed from the Activity %s that has a WebView associated may allow another application to read information stored in the internal memory by forcing it to open a malicious HTML file\n" % (",".join(notify[activity]["used_methods"]), activity)
-        #     confidence = notify[activity]["confidence"]
-        #     if notify[activity]["is_browsable"]:
-        #         description += "This attack could be done remotely by browsing a malicious site downloading an malicious HTML file and opening the application " \
-        #                        "via javascript using the intent:// scheme to open the downloaded malicious file"
-        #     #test dynamically not yets
-        #     self.add_vulnerability("WEBVIEW_FILE_SCHEME", description, confidence=confidence, dynamic_test=True,reference_class=activity,
-        #                            dynamic_test_params={"activity": activity,
-        #                                                 "manifest_entry": notify[activity]["manifest_entry"].toxml()})
-        #
-        # Chequear si no hay blabla/* en el mime-type, es decir, si no hay cadenas que terminen con "/*".
+        for note in notify:
+            description = "The activity (%s) receives android.intent.action.SEND or android.intent.action.SEND_MULTIPLE intents and accepts a file-scheme as data URI (file://...) as parameter. It may be vulnerable to surreptitious sharing: a malicious application may set a URI referencing a private file of this application, and if no proper sanity checking is done this might be used to obtain the referenced file.\n" % note["activity_name"]
+            if not note["is_mime_checked"]:
+                description += "The mimeType is not checked in this activity (or checks by */*). Checking MIME types explicitly may help securing the application."
+            self.add_vulnerability("SURREPTITIOUS_SHARING", description, confidence=note["intent_confidence"])
 
         return self.get_report()
 
