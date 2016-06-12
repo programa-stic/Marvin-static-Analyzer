@@ -36,6 +36,7 @@ class SurreptitiousSharingAnalyzer(VulnerabilityAnalyzer):
         self.cm = cm
 
     def get_send_filter_allowing_file_scheme(self, activity):
+        intent_filters_vulnerables = []
         for int_filt in activity.getElementsByTagName('intent-filter'):
             action_send = any(action.getAttribute('android:name') == 'android.intent.action.SEND' or
                               action.getAttribute('android:name') == 'android.intent.action.SEND_MULTIPLE'
@@ -45,9 +46,8 @@ class SurreptitiousSharingAnalyzer(VulnerabilityAnalyzer):
                     d.getAttribute('android:scheme') == 'file' for d in int_filt.getElementsByTagName('data'))
                 no_scheme = not any(d.hasAttribute('android:scheme') for d in int_filt.getElementsByTagName('data'))
                 if file_allowed or no_scheme:
-                    print int_filt.toxml()
-                    return int_filt
-        return None
+                    intent_filters_vulnerables.append(int_filt)
+        return intent_filters_vulnerables
 
     def is_mime_checked_in_filter(self, int_filt):
         return any(d.hasAttribute('android:mimeType') and d.getAttribute('android:mimeType') != "*/*"
@@ -58,23 +58,34 @@ class SurreptitiousSharingAnalyzer(VulnerabilityAnalyzer):
                       self.apk.get_android_manifest_xml().getElementsByTagName('activity'))
 
     def check_data_sending_allowing_file_schemes(self):
-        notify = {}
+        notify = []
+        confidences = []
+        mime_checked_confidence = 0.5
+        non_mime_checked_confidence = 0.95
 
         for activity in self.browseable_activities():
             activity_name = self.apk.format_value(activity.getAttribute('android:name'))
-            file_scheme_allowing_filter = self.get_send_filter_allowing_file_scheme(activity)
-            if file_scheme_allowing_filter is not None:
-                is_mime_checked = self.is_mime_checked_in_filter(file_scheme_allowing_filter)
-                if is_mime_checked:
-                    confidence = 0.5
-                else:
-                    confidence = 0.95
-                print activity_name
-                print "File Scheme allowed: True \nMIME type checked: ", is_mime_checked, '\n'
-                notify[activity_name] = {"is_file_scheme_allowed": True,
-                                         "is_mime_checked": is_mime_checked,
-                                         "confidence": confidence,
-                                         "manifest_entry": activity}
+            file_schemes_allowing_filter = self.get_send_filter_allowing_file_scheme(activity)
+            if len(file_schemes_allowing_filter) != 0:
+                for int_filt in file_schemes_allowing_filter:
+                    is_mime_checked = self.is_mime_checked_in_filter(int_filt)
+                    if is_mime_checked:
+                        intent_confidence = mime_checked_confidence
+                        confidences.append(mime_checked_confidence)
+                    else:
+                        intent_confidence = non_mime_checked_confidence
+                        confidences.append(non_mime_checked_confidence)
+                    print int_filt.toxml()
+                    print "Activity name:", activity_name
+                    print "File Scheme allowed: True \nMIME type checked: ", is_mime_checked
+                    print "Intent confidence:", intent_confidence, '\n'
+                    notify.append({ "activity_name": activity_name,
+                                    "is_file_scheme_allowed": True,
+                                    "is_mime_checked": is_mime_checked,
+                                    "intent_confidence": intent_confidence,
+                                    "manifest_entry": activity})
+
+        print "Final confidence:", max(confidences), '\n'
 
         # ToDo: Complete the report
         # for activity in notify:
@@ -87,6 +98,8 @@ class SurreptitiousSharingAnalyzer(VulnerabilityAnalyzer):
         #     self.add_vulnerability("WEBVIEW_FILE_SCHEME", description, confidence=confidence, dynamic_test=True,reference_class=activity,
         #                            dynamic_test_params={"activity": activity,
         #                                                 "manifest_entry": notify[activity]["manifest_entry"].toxml()})
+        #
+        # Chequear si no hay blabla/* en el mime-type, es decir, si no hay cadenas que terminen con "/*".
 
         return self.get_report()
 
