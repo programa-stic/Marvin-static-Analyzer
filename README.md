@@ -61,6 +61,7 @@ List of vulnerabilities:
 * VUNGLE
 * PATH_TRAVERSAL_PROVIDER
 * HARDCODED_BAAS_SECRET_KEYS (AWS, CloudMine, Azure, Parse)
+* SURREPTITIOUS_SHARING
 
 
 ### Requirements ###

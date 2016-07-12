@@ -39,6 +39,7 @@ from DynamicReceiverAnalyzer import *
 from ComponentHijackingAnalyzer import *
 from ContentProviderPathTraversalAnalyzer import *
 from FragmentInjectionAnalyzer import *
+from SurreptitiousSharingAnalyzer import *
 
 def analyze_vulnerabilities_from(apk_file):
     _apk = apk.APK(apk_file)
@@ -72,6 +73,8 @@ def analyze_vulnerabilities(apk_file,_apk,vm,dx):
     final_report.update(DynamicReceiverAnalyzer(vm, dx, cm).check_registered_dynamic_receivers())
 
     final_report.update(WebViewFileSchemeAnalyzer(_apk, vm, dx, cm).check_webviews_allowing_file_schemes())
+
+    final_report.update(SurreptitiousSharingAnalyzer(_apk, vm, dx, cm).check_data_sending_allowing_file_schemes())
 
     final_report.update(RedisClientAnalyzer(vm, dx, cm).check_redis_client())
 
