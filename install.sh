@@ -5,7 +5,7 @@ tar -xvzf v2.0.tar.gz
 mv androguard-2.0 androguard
 echo "Cloning SAAF"
 git clone https://github.com/programa-stic/SAAF
-mv saaf SAAF-MODULE
+mv SAAF SAAF-MODULE
 echo "Configuring SAAF"
 cp saaf-configuration/backtracking-patterns.xml SAAF-MODULE/conf/backtracking-patterns.xml
 cp saaf-configuration/saaf.conf SAAF-MODULE/conf/saaf.conf
